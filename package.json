@@ -1,6 +1,6 @@
 {
-  "name": "@metamask/providers",
-  "version": "22.1.1",
+  "name": "@deserialize/providers",
+  "version": "22.1.2",
   "description": "A JavaScript Ethereum provider that connects to the wallet over a stream",
   "keywords": [
     "MetaMask",
@@ -93,6 +93,7 @@
     "lint:fix": "yarn lint:eslint --fix && yarn lint:constraints --fix && yarn lint:misc --write && yarn lint:dependencies && yarn lint:changelog",
     "lint:misc": "prettier '**/*.json' '**/*.md' '**/*.yml' '!.yarnrc.yml' --ignore-path .gitignore --no-error-on-unmatched-pattern",
     "prepack": "./scripts/prepack.sh",
+    "publish:sdk": "yarn run build && npm publish --access=public",
     "test": "jest && jest-it-up",
     "test:watch": "jest --watch"
   },

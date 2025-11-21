@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { rpcErrors } from '@metamask/rpc-errors';
 import type { Json, JsonRpcRequest, JsonRpcResponse } from '@metamask/utils';
 import type { Duplex } from 'readable-stream';
@@ -16,15 +17,15 @@ import {
 
 export type SendSyncJsonRpcRequest = {
   method:
-    | 'eth_accounts'
-    | 'eth_coinbase'
-    | 'eth_uninstallFilter'
-    | 'net_version';
+  | 'eth_accounts'
+  | 'eth_coinbase'
+  | 'eth_uninstallFilter'
+  | 'net_version';
 } & JsonRpcRequest;
 
 type WarningEventName = keyof SentWarningsState['events'];
 
-export type MetaMaskInpageProviderOptions = {
+export type DecaneInpageProviderOptions = {
   /**
    * Whether the provider should send page metadata.
    */
@@ -46,11 +47,11 @@ type SentWarningsState = {
 };
 
 /**
- * The name of the stream consumed by {@link MetaMaskInpageProvider}.
+ * The name of the stream consumed by {@link DecaneInpageProvider}.
  */
-export const MetaMaskInpageProviderStreamName = 'metamask-provider';
+export const DecaneInpageProviderStreamName = '-provider';
 
-export class MetaMaskInpageProvider extends AbstractStreamProvider {
+export class DecaneInpageProvider extends AbstractStreamProvider {
   protected _sentWarnings: SentWarningsState = {
     // methods
     enable: false,
@@ -69,18 +70,18 @@ export class MetaMaskInpageProvider extends AbstractStreamProvider {
    * Experimental methods can be found here.
    */
   public readonly _metamask: ReturnType<
-    MetaMaskInpageProvider['_getExperimentalApi']
+    DecaneInpageProvider['_getExperimentalApi']
   >;
 
   #networkVersion: string | null;
 
   /**
-   * Indicating that this provider is a MetaMask provider.
+   * Indicating that this provider is a Decane provider.
    */
-  public readonly isMetaMask: true;
+  public readonly isDecane: true;
 
   /**
-   * Creates a new `MetaMaskInpageProvider`.
+   * Creates a new `DecaneInpageProvider`.
    *
    * @param connectionStream - A Node.js duplex stream.
    * @param options - An options bag.
@@ -96,7 +97,7 @@ export class MetaMaskInpageProvider extends AbstractStreamProvider {
       logger = console,
       maxEventListeners = 100,
       shouldSendMetadata,
-    }: MetaMaskInpageProviderOptions = {},
+    }: DecaneInpageProviderOptions = {},
   ) {
     super(connectionStream, {
       logger,
@@ -111,7 +112,7 @@ export class MetaMaskInpageProvider extends AbstractStreamProvider {
     this._initializeStateAsync();
 
     this.#networkVersion = null;
-    this.isMetaMask = true;
+    this.isDecane = true;
 
     this._sendSync = this._sendSync.bind(this);
     this.enable = this.enable.bind(this);
@@ -405,9 +406,9 @@ export class MetaMaskInpageProvider extends AbstractStreamProvider {
     return new Proxy(
       {
         /**
-         * Determines if MetaMask is unlocked by the user.
+         * Determines if Decane is unlocked by the user.
          *
-         * @returns Promise resolving to true if MetaMask is currently unlocked.
+         * @returns Promise resolving to true if Decane is currently unlocked.
          */
         isUnlocked: async () => !this._state.isPermanentlyDisconnected,
 
@@ -470,7 +471,7 @@ export class MetaMaskInpageProvider extends AbstractStreamProvider {
     // The wallet will send a value of `loading` for `networkVersion` when it intends
     // to communicate that this value cannot be resolved and should be intepreted as null.
     // The wallet cannot directly send a null value for `networkVersion` because this
-    // would be a breaking change for existing dapps that use their own embedded MetaMask provider
+    // would be a breaking change for existing dapps that use their own embedded Decane provider
     // that expect this value to always be a integer string or the value 'loading'.
 
     const targetNetworkVersion =

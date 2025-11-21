@@ -2,9 +2,9 @@ import { type Duplex } from 'readable-stream';
 
 import type { CAIP294WalletData } from './CAIP294';
 import { announceWallet } from './CAIP294';
+import type { DecaneInpageProviderOptions } from './DecaneInpageProvider';
+import { DecaneInpageProvider } from './DecaneInpageProvider';
 import { announceProvider as announceEip6963Provider } from './EIP6963';
-import type { MetaMaskInpageProviderOptions } from './MetaMaskInpageProvider';
-import { MetaMaskInpageProvider } from './MetaMaskInpageProvider';
 import { shimWeb3 } from './shimWeb3';
 import type { BaseProviderInfo } from './types';
 
@@ -33,10 +33,10 @@ type InitializeProviderOptions = {
    * Whether the provider announce a CAIP-294 event.
    */
   shouldAnnounceCaip294?: boolean;
-} & MetaMaskInpageProviderOptions;
+} & DecaneInpageProviderOptions;
 
 /**
- * Initializes a MetaMaskInpageProvider and (optionally) assigns it as window.ethereum.
+ * Initializes a DecaneInpageProvider and (optionally) assigns it as window.ethereum.
  *
  * @param options - An options bag.
  * @param options.connectionStream - A Node.js stream.
@@ -58,8 +58,8 @@ export function initializeProvider({
   shouldSetOnWindow = true,
   shouldShimWeb3 = false,
   shouldAnnounceCaip294 = true,
-}: InitializeProviderOptions): MetaMaskInpageProvider {
-  const provider = new MetaMaskInpageProvider(connectionStream, {
+}: InitializeProviderOptions): DecaneInpageProvider {
+  const provider = new DecaneInpageProvider(connectionStream, {
     logger,
     maxEventListeners,
     shouldSendMetadata,
@@ -83,7 +83,7 @@ export function initializeProvider({
 
     if (shouldAnnounceCaip294) {
       // eslint-disable-next-line no-void
-      void announceCaip294WalletData(provider, providerInfo);
+      // void announceCaip294WalletData(provider, providerInfo);
     }
   }
 
@@ -105,7 +105,7 @@ export function initializeProvider({
  * @param providerInstance - The provider instance.
  */
 export function setGlobalProvider(
-  providerInstance: MetaMaskInpageProvider,
+  providerInstance: DecaneInpageProvider,
 ): void {
   try {
     (window as Record<string, any>).ethereum = providerInstance;
@@ -118,20 +118,28 @@ export function setGlobalProvider(
   }
 }
 
+// /**
+//  * Announces [CAIP-294](https://github.com/ChainAgnostic/CAIPs/blob/bc4942857a8e04593ed92f7dc66653577a1c4435/CAIPs/caip-294.md) wallet data according to build type and browser.
+//  * Until released to stable, `extensionId` is only set in the `decane_getProviderState` result if the build type is `flask`.
+//  * `extensionId` is included if browser is chromium based because it is only useable by browsers that support [externally_connectable](https://developer.chrome.com/docs/extensions/reference/manifest/externally-connectable).
+//  *
+//  * @param provider - The provider {@link DecaneInpageProvider} used for retrieving `extensionId`.
+//  * @param providerInfo - The provider info {@link BaseProviderInfo} that should be announced if set.
+//  */
 /**
- * Announces [CAIP-294](https://github.com/ChainAgnostic/CAIPs/blob/bc4942857a8e04593ed92f7dc66653577a1c4435/CAIPs/caip-294.md) wallet data according to build type and browser.
- * Until released to stable, `extensionId` is only set in the `metamask_getProviderState` result if the build type is `flask`.
- * `extensionId` is included if browser is chromium based because it is only useable by browsers that support [externally_connectable](https://developer.chrome.com/docs/extensions/reference/manifest/externally-connectable).
+ * Announces CAIP-294 wallet data by querying the provider for additional state
+ * (such as an extensionId) and forwarding the combined wallet data to announceWallet.
  *
- * @param provider - The provider {@link MetaMaskInpageProvider} used for retrieving `extensionId`.
- * @param providerInfo - The provider info {@link BaseProviderInfo} that should be announced if set.
+ * @param provider - The DecaneInpageProvider used to query provider state.
+ * @param providerInfo - The CAIP-294 wallet data that should be announced.
+ * @returns A promise that resolves when the wallet data has been announced.
  */
 export async function announceCaip294WalletData(
-  provider: MetaMaskInpageProvider,
+  provider: DecaneInpageProvider,
   providerInfo: CAIP294WalletData,
 ): Promise<void> {
   const providerState = await provider.request<{ extensionId?: string }>({
-    method: 'metamask_getProviderState',
+    method: 'decane_getProviderState',
   });
 
   const targets = [];

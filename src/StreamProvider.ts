@@ -63,14 +63,14 @@ export abstract class AbstractStreamProvider extends BaseProvider {
     // Typecast: The type of `Duplex` is incompatible with the type of
     // `JsonRpcConnection`.
     this._jsonRpcConnection = createStreamMiddleware({
-      retryOnMessage: 'METAMASK_EXTENSION_CONNECT_CAN_RETRY',
+      retryOnMessage: 'DECANE_EXTENSION_CONNECT_CAN_RETRY',
     }) as unknown as JsonRpcConnection;
 
     pipeline(
       connectionStream,
       this._jsonRpcConnection.stream,
       connectionStream,
-      this._handleStreamDisconnect.bind(this, 'MetaMask RpcProvider'),
+      this._handleStreamDisconnect.bind(this, 'Decane RpcProvider'),
     );
 
     // Wire up the JsonRpcEngine to the JSON-RPC connection stream
@@ -79,16 +79,16 @@ export abstract class AbstractStreamProvider extends BaseProvider {
     // Handle JSON-RPC notifications
     this._jsonRpcConnection.events.on('notification', (payload) => {
       const { method, params } = payload;
-      if (method === 'metamask_accountsChanged') {
+      if (method === 'decane_accountsChanged') {
         this._handleAccountsChanged(params);
-      } else if (method === 'metamask_chainChanged') {
+      } else if (method === 'decane_chainChanged') {
         this._handleChainChanged(params);
       } else if (EMITTED_NOTIFICATIONS.includes(method)) {
         this.emit('message', {
           type: method,
           data: params,
         });
-      } else if (method === 'METAMASK_STREAM_FAILURE') {
+      } else if (method === 'DECANE_STREAM_FAILURE') {
         connectionStream.destroy(
           new Error(messages.errors.permanentlyDisconnected()),
         );
@@ -103,24 +103,24 @@ export abstract class AbstractStreamProvider extends BaseProvider {
   /**
    * MUST be called by child classes.
    *
-   * Calls `metamask_getProviderState` and passes the result to
+   * Calls `decane_getProviderState` and passes the result to
    * {@link BaseProvider._initializeState}. Logs an error if getting initial state
    * fails. Throws if called after initialization has completed.
    */
   protected async _initializeStateAsync() {
     let initialState: Parameters<BaseProvider['_initializeState']>[0];
 
-    try {
-      initialState = (await this.request({
-        method: 'metamask_getProviderState',
-        params: { isInitializingStreamProvider: true },
-      })) as Parameters<BaseProvider['_initializeState']>[0];
-    } catch (error) {
-      this._log.error(
-        'MetaMask: Failed to get initial state. Please report this bug.',
-        error,
-      );
-    }
+    // try {
+    //   initialState = (await this.request({
+    //     method: 'decane_getProviderState',
+    //     params: { isInitializingStreamProvider: true },
+    //   })) as Parameters<BaseProvider['_initializeState']>[0];
+    // } catch (error) {
+    //   this._log.error(
+    //     'Decane: Failed to get initial state. Please report this bug.',
+    //     error,
+    //   );
+    // }
     this._initializeState(initialState);
   }
 
@@ -135,7 +135,7 @@ export abstract class AbstractStreamProvider extends BaseProvider {
    */
   // eslint-disable-next-line no-restricted-syntax
   private _handleStreamDisconnect(streamName: string, error: Error | null) {
-    let warningMsg = `MetaMask: Lost connection to "${streamName}".`;
+    let warningMsg = `Decane: Lost connection to "${streamName}".`;
     if (error?.stack) {
       warningMsg += `\n${error.stack}`;
     }
@@ -194,7 +194,7 @@ export class StreamProvider extends AbstractStreamProvider {
   /**
    * MUST be called after instantiation to complete initialization.
    *
-   * Calls `metamask_getProviderState` and passes the result to
+   * Calls `decane_getProviderState` and passes the result to
    * {@link BaseProvider._initializeState}. Logs an error if getting initial state
    * fails. Throws if called after initialization has completed.
    */

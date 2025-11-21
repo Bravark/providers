@@ -72,7 +72,7 @@ function createErrorMiddleware(
       if (!error) {
         return done();
       }
-      log.warn(`MetaMask - RPC Error: ${error.message}`, error);
+      log.warn(`Decane - RPC Error: ${error.message}`, error);
       return done();
     });
   };
@@ -85,15 +85,15 @@ export const getRpcPromiseCallback =
     reject: (error?: Error) => void,
     unwrapResult = true,
   ) =>
-  (error: Error, response: PendingJsonRpcResponse<Json>): void => {
-    if (error || response.error) {
-      reject(error || response.error);
-    } else {
-      !unwrapResult || Array.isArray(response)
-        ? resolve(response)
-        : resolve(response.result);
-    }
-  };
+    (error: Error, response: PendingJsonRpcResponse<Json>): void => {
+      if (error || response.error) {
+        reject(error || response.error);
+      } else {
+        !unwrapResult || Array.isArray(response)
+          ? resolve(response)
+          : resolve(response.result);
+      }
+    };
 
 /**
  * Checks whether the given chain ID is valid, meaning if it is non-empty,

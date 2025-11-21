@@ -1,4 +1,4 @@
-import type { MetaMaskInpageProvider } from './MetaMaskInpageProvider';
+import type { DecaneInpageProvider } from './DecaneInpageProvider';
 import type { ConsoleLike } from './utils';
 
 /**
@@ -9,7 +9,7 @@ import type { ConsoleLike } from './utils';
  * @param log - The logging API to use.
  */
 export function shimWeb3(
-  provider: MetaMaskInpageProvider,
+  provider: DecaneInpageProvider,
   log: ConsoleLike = console,
 ): void {
   let loggedCurrentProvider = false;

@@ -5,7 +5,7 @@ import { pipeline } from 'readable-stream';
 import type { Runtime } from 'webextension-polyfill';
 
 import config from './external-extension-config.json';
-import { MetaMaskInpageProviderStreamName } from '../MetaMaskInpageProvider';
+import { DecaneInpageProviderStreamName } from '../DecaneInpageProvider';
 import { StreamProvider } from '../StreamProvider';
 import { getDefaultExternalMiddleware } from '../utils';
 
@@ -30,7 +30,7 @@ export function createExternalExtensionProvider(
     const metamaskPort = chrome.runtime.connect(extensionId) as Runtime.Port;
 
     const pluginStream = new PortStream(metamaskPort);
-    const streamName = MetaMaskInpageProviderStreamName;
+    const streamName = DecaneInpageProviderStreamName;
     const mux = new ObjectMultiplex();
     pipeline(pluginStream, mux, pluginStream, (error: Error | null) => {
       let warningMsg = `Lost connection to "${streamName}".`;

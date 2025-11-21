@@ -10,6 +10,10 @@ import {
   announceWallet as caip294AnnounceWallet,
   requestWallet as caip294RequestWallet,
 } from './CAIP294';
+import {
+  DecaneInpageProvider,
+  DecaneInpageProviderStreamName,
+} from './DecaneInpageProvider';
 import type {
   EIP6963AnnounceProviderEvent,
   EIP6963ProviderDetail,
@@ -25,10 +29,6 @@ import {
   initializeProvider,
   setGlobalProvider,
 } from './initializeInpageProvider';
-import {
-  MetaMaskInpageProvider,
-  MetaMaskInpageProviderStreamName,
-} from './MetaMaskInpageProvider';
 import { shimWeb3 } from './shimWeb3';
 import { StreamProvider } from './StreamProvider';
 import type { ConsoleLike } from './utils';
@@ -50,8 +50,8 @@ export {
   BaseProvider,
   createExternalExtensionProvider,
   initializeProvider,
-  MetaMaskInpageProviderStreamName,
-  MetaMaskInpageProvider,
+  DecaneInpageProviderStreamName,
+  DecaneInpageProvider,
   setGlobalProvider,
   shimWeb3,
   StreamProvider,
