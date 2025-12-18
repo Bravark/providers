@@ -2,8 +2,9 @@ const messages = {
   errors: {
     disconnected: () =>
       'Decane: Disconnected from chain. Attempting to connect.',
-    permanentlyDisconnected: () =>
-      'Decane: Disconnected from MetaMask background. Page reload required.',
+    permanentlyDisconnected: (type?: string) =>
+      `Decane: Disconnected from ${type ?? 'unknown source'
+      }. Page reload required.`,
     sendSiteMetadata: () =>
       `Decane: Failed to send site metadata. This is an internal error, please report this bug.`,
     unsupportedSync: (method: string) =>

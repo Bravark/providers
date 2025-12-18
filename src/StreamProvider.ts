@@ -90,7 +90,9 @@ export abstract class AbstractStreamProvider extends BaseProvider {
         });
       } else if (method === 'DECANE_STREAM_FAILURE') {
         connectionStream.destroy(
-          new Error(messages.errors.permanentlyDisconnected()),
+          new Error(
+            `${messages.errors.permanentlyDisconnected('notification')}`,
+          ),
         );
       }
     });

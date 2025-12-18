@@ -205,12 +205,12 @@ export abstract class BaseProvider extends SafeEventEmitter {
     const payload =
       params === undefined || params === null
         ? {
-            method,
-          }
+          method,
+        }
         : {
-            method,
-            params,
-          };
+          method,
+          params,
+        };
 
     return new Promise<Type>((resolve, reject) => {
       this._rpcRequest(payload, getRpcPromiseCallback(resolve, reject));
@@ -354,7 +354,8 @@ export abstract class BaseProvider extends SafeEventEmitter {
       } else {
         error = new JsonRpcError(
           1011, // Internal error
-          errorMessage ?? messages.errors.permanentlyDisconnected(),
+          errorMessage ??
+          messages.errors.permanentlyDisconnected('_handleDisconnect'),
         );
         this._log.error(error);
         this.#chainId = null;
@@ -385,10 +386,10 @@ export abstract class BaseProvider extends SafeEventEmitter {
     isConnected,
   }:
     | {
-        chainId?: string;
-        networkVersion?: string | undefined;
-        isConnected?: boolean | undefined;
-      }
+      chainId?: string;
+      networkVersion?: string | undefined;
+      isConnected?: boolean | undefined;
+    }
     | undefined = {}) {
     if (!isValidChainId(chainId)) {
       this._log.error(messages.errors.invalidNetworkParams(), { chainId });
